@@ -135,10 +135,6 @@ extra:
   app: web
 ```
 
-**Output:**
-```
-DEBUG - Debug message - app:my_app
-```
 
 ## Advanced Features
 
