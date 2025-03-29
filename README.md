@@ -1,159 +1,171 @@
---------------
-### Configuration
-- Create a file `logger.yml`. Copy the contents from the repository and make the necessary changes (If needed)
-```yaml
-version: 1
-disable_existing_loggers: no
-formatters:
-  simple:
-    format: "%(asctime)s - %(name)s - %(levelname)s - %(module)s:%(lineno)d - %(message)s"
-    datefmt: '%Y-%m-%d %H:%M:%S'
-  your_format_name:
-    (): pylogger_slack.LoggerFormatter
-    datefmt: '%Y-%m-%d %H:%M:%S'
-    extra: {"author": "${USER}"}
-    exclude_fields: [ecs, log.original]
+# pylogger_slack
 
-handlers:
-  console:
-    class: logging.StreamHandler
-    level: DEBUG
-    formatter: your_format_name
-    stream: ext://sys.stdout
-  file:
-    class : logging.handlers.RotatingFileHandler
-    level: DEBUG
-    formatter: your_format_name
-    filename: 'logging.example.log'
-    mode: a
-    maxBytes: 1000000  # 1 MB
-    backupCount: 2
-    encoding: utf8
+A Python logging utility with Slack notification support, built for flexibility and ease of use. `pylogger_slack` provides a customizable logger with structured output options (plain text, JSON, YAML) and integrates with Slack for notifications. It’s designed to work out of the box with sensible defaults while allowing deep customization via a TOML configuration file.
 
-root:
-  level: DEBUG
-  handlers: [console]
-  propogate: no
+## Installation
 
-loggers:
-  fasalLogger:
-    level: DEBUG
-    handlers: [console]
-    propagate: no
+Install `pylogger_slack` via pip (assuming it’s published to PyPI, or install locally):
+
+```bash
+pip install pylogger_slack
 ```
 
-- The `logger.yml` defined here defaults to console. In order to log the contents into a file, make the required changes to the `logger.yml`.
-``` yaml
-root:
-  handlers: [console, file]
+**Dependencies**:
+- `ecs-logging` (for ECS formatting)
+- `pyyaml` (for YAML output)
+- `slack-sdk` (optional, for Slack notifications)
 
-loggers:
-  fasalLogger:
-    handlers: [console, file]
 
-```
+## Quick Start
 
-And change the filename and location.
-```yaml
-handler:
-    file:
-        filename: 'logging.example.log'
-```
-
-### Usage
-In order to use the logger in your code, add the following piece of code at the top of your .py file
-
-**Note:** `Get the webhook to slack to send these notification to any other channel. learn how to do it here:`
+Here’s a basic example to get started:
 
 ```python
-import logging
-import logging.config
-import os
-from pylogger_slack import LoggerInitializer, SlackNotification
+# example.py
+from pylogger_slack import LOGGER, SLACK
 
-logging.captureWarnings(True)
-logger = logging.getLogger(__name__)
-logger_init = LoggerInitializer()
-logger_init(logger=logger, config='path_to_logger.yml')
-slk = SlackNotification() # set parameter for webhook, DEV (if needed)
-
-# Use logger now
-logger.info("Logger set")
-
-# Send a message to slack channel
-slk.notify(message="testing")
-
+LOGGER.info("This is an info message.")
+LOGGER.info("Tagged message", extra={"tag": "v1.0"})
+SLACK.notify("Something happened!")
 ```
-----------
 
-### Variables taken from environment are:
-Set these variables as required in the file used to read environment variable.
+Run it:
+```bash
+python example.py
+```
 
-*Note: You can keep env variables in an yaml file `local.yml` and use [python-dotenv-yaml](https://pypi.org/project/python-dotenv-yaml/) library to read it*
+**Output** (default config, with format_type=default):
+```
+2025-03-29 12:34:56 - __main__ - INFO - This is an info message.
+2025-03-29 12:34:56 - __main__ - INFO - Tagged message
+Slack notification (dev mode): Something happened!
+```
 
-  - `SLACK_WEBHOOK`: Channel webhook trigger
-  - `DEV`: If True, no message is send to slack
-  - `ENV`: logger environment (staging/production/development)
+## Configuration
 
-------------
-### Another example usage:
+`pylogger_slack` uses a default configuration but can be customized via a `pylogger_slack.toml` file in your project root level.
+
+
+### Customizing with `pylogger_slack.toml`
+
+```toml
+# pylogger_slack.toml
+[formatters.default]
+format = "%(levelname)s - %(message)s"
+extra = { "app" = "my_app" }
+exclude_fields = ["user_id", "secret"]
+format_type = "json"
+```
+
+Run `example.py` with this file in the same directory:
+```json
+{"log": "INFO - This is an info message.", "extra": {"app": "my_app"}}
+{"log": "INFO - Tagged message", "extra": {"app": "my_app", "tag": "v1.0"}}
+```
+
+### `pylogger_slack.toml` Syntax
+Below is the complete syntax with examples and explanations.
+
+```toml
+
+disable_existing_loggers = false # Whether to disable other loggers (true/false)
+slack_webhook_url = "https://hooks.slack.com/services/T00" # Webhook
+dev = false   # False to send real Slack notifications
+
+# General settings
+env = "production"  # Environment name
+format_type = "json"  # Output type: "default" (plain), "json", "yaml"
+
+# Formatter configuration
+[formatters.default]    # Name can be changed (e.g., "custom")
+"()" = "pylogger_slack.logger.LoggerFormatter"  # Class to instantiate (optional, default provided)
+format = "%(asctime)s [%(levelname)s] %(message)s"  # Log format string
+datefmt = "%H:%M:%S"           # Date/time format (optional)
+extra = { "app" = "my_app", "version" = "1.0" }  # Default extra fields
+exclude_fields = ["user_id", "secret"]  # Fields to exclude from structured output
+
+# Additional formatter example
+[formatters.detailed]
+format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s - tag:%(tag)s"
+extra = { "service" = "api" }
+exclude_fields = ["log.original"]
+
+# Handler configuration
+[handlers.console]
+class = "logging.StreamHandler"  # Handler class
+level = "INFO"                   # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+formatter = "default"            # Reference to a formatter name
+stream = "ext://sys.stdout"      # Output stream (ext://sys.stdout or ext://sys.stderr)
+
+[handlers.file]
+class = "logging.FileHandler"
+level = "WARNING"
+formatter = "detailed"
+filename = "app.log"             # File to log to
+
+# Root logger configuration
+[root]
+level = "DEBUG"                  # Root log level
+handlers = ["console", "file"]   # List of handler names
+```
+
+### Custom Config in Code
+Override config programmatically:
 ```python
-import logging
-import logging.config
-import os
+from pylogger_slack import LOGGER, SLACK, CONFIG, LoggerInitializer
 
-from functools import reduce
-from pylogger_slack import LoggerInitializer, SlackNotification
+CONFIG["format_type"] = "yaml"
+CONFIG["formatters"]["default"]["extra"] = {"app": "web"}
+CONFIG["root"]["level"] = "DEBUG"
+initializer = LoggerInitializer()
+initializer(LOGGER)  # Reapply config
 
-logging.captureWarnings(True)
-logger = logging.getLogger(__name__)
-logger_init = LoggerInitializer()
-logger_init(logger=logger, config='logger.yml')
-slk = SlackNotification(DEV=True)
-high_level_stuff = {'custom_tag': 'tagged-at-line'}
-
-
-logger.info("Starting the function", extra={'tag': 'xxx'})
-def my_sum(a,b):
-    if isinstance(a, str):
-        logger.warning("This is not int")
-    logger.info(f'performing addition of {a}, {b}')
-    try:
-        result = a+b
-        logger.info(f'result: {result}')
-    except Exception as err:
-        logger.error(err)
-        raise err
-    return result
-
-def run_request():
-    import requests
-    logger.info("request")
-    ploads = {'things':2,'total':25}
-    r = requests.get('https://httpbin.org/get',params=ploads)
-
-
-param = [1,2,3]
-result = reduce(my_sum, param)
-logger.info(f"final: {result}", extra=high_level_stuff)
-run_request()
-slk.notify(message="this is test")
+LOGGER.debug("Now visible!")
+SLACK.notify("Test notification")
 ```
-**Note:**
-1. Use logger.info() with first argument as string
-2. In order to pass another set of key: value pairs to logger.info / logger.warnings / logger.debug
-  - Pass the key: value pair to logger.yaml
-  ```yaml
-  formatters:
-  your_format_name:
-    (): fasal_logger.FasalStdlibFormatter
-    datefmt: '%Y-%m-%d %H:%M:%S'
-    extra: {"author": "${USER}", "key-1": "value-1", "key-2": "value-2"}
-  ```
-  - Pass a dictionary to argument `extra` inside logger.info(). However, doing so will only effect the logger's log where its added and adding in `logger.yaml` will effect it globally
-  ```python
-  logger.info("my message", extra = {'key-1': 'value-1'})
-  ```
 
------------
-Build and Published using (`poetry`)[https://python-poetry.org/docs/cli/#publish]
+**Output:**
+```yaml
+log: '2025-03-29 12:34:56 - __main__ - DEBUG - Now visible!'
+extra:
+  app: web
+```
+
+**Output:**
+```
+DEBUG - Debug message - app:my_app
+```
+
+## Advanced Features
+
+### Excluding Fields
+Exclude sensitive data:
+```toml
+[formatters.default]
+exclude_fields = ["password", "token"]
+format_type = "json"
+```
+```python
+LOGGER.info("Login", extra={"password": "secret", "user": "alice"})
+```
+```json
+{"log": "INFO - Login", "extra": {"user": "alice"}}
+```
+
+### Multiple Handlers
+Log to console and file:
+```toml
+[handlers.console]
+class = "logging.StreamHandler"
+level = "INFO"
+formatter = "default"
+
+[handlers.file]
+class = "logging.FileHandler"
+level = "ERROR"
+formatter = "default"
+filename = "errors.log"
+
+[root]
+handlers = ["console", "file"]
+```

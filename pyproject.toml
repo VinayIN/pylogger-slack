@@ -1,23 +1,24 @@
-[tool.poetry]
+[project]
 name = "pylogger-slack"
 version = "0.0.1"
-description = "Python logger with an option to format it for YAML/JSON format and support for Slack Notification. (Helpful for monitoring codebase in production/testing)"
-authors = ["Binay Kumar Pradhan <bpradhan.asli@gmail.com>"]
-#readme = "README.md"
+description = "Python logging with an option to format it for YAML/JSON format with a support for Slack Notification. (Helpful for monitoring codebase in production/testing)"
+authors = [{name="Binay Kumar Pradhan", email ="bpradhan.asli@gmail.com"}]
+readme = "README.md"
 license = "GPL-3.0"
-repository = "https://github.com/VinayIN/pylogger-slack.git"
-keywords = ["logger", "slack notification", "logger yaml", "logger json", "python logging"]
-packages = [
-    { include = "pylogger_slack" }
+
+keywords = ["logger", "python slack notification", "logger yaml", "logger json", "python logging"]
+requires-python = ">=3.11"
+dependencies = [
+    "ecs-logging>=2.2.0",
+    "pyyaml>=6.0.2",
+    "slack-sdk>=3.35.0",
 ]
-include = ["logger.yml"]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-ecs-logging = "2.0.0"
-PyYAML = "6.0"
-slack-sdk = "3.18.1"
+[project.urls]
+Repository = "https://github.com/VinayIN/pylogger-slack.git"
+Documentation = "https://pylogger-slack.pypa.io/en/latest/"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+]
