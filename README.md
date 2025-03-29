@@ -2,6 +2,10 @@
 
 A Python logging utility with Slack notification support, built for flexibility and ease of use. `pylogger_slack` provides a customizable logger with structured output options (plain text, JSON, YAML) and integrates with Slack for notifications. It’s designed to work out of the box with sensible defaults while allowing deep customization via a TOML configuration file.
 
+**Support my development**
+
+<a href="https://www.buymeacoffee.com/i_binay" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;" ></a>
+
 ## Installation
 
 Install `pylogger_slack` via pip (assuming it’s published to PyPI, or install locally):
