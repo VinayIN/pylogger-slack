@@ -7,7 +7,7 @@ build:
     python: "3.11"
   jobs:
     install:
-      - pip install .[dev]
+      - pip install --dependency-groups=dev --no-cache-dir
     post_build:
       - pip install mike
       - git config --global user.name "ReadTheDocs"
