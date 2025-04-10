@@ -4,7 +4,7 @@ version = "0.0.3"
 description = "Python logging with an option to format it for YAML/JSON format with a support for Slack Notification. (Helpful for monitoring codebase in production/testing)"
 authors = [{name="Binay Kumar Pradhan", email ="bpradhan.asli@gmail.com"}]
 readme = "README.md"
-license = {text = "GPL-3.0"}
+license = "GPL-3.0"
 
 keywords = ["logger", "python slack notification", "logger yaml", "logger json", "python logging"]
 requires-python = ">=3.11"
