@@ -50,8 +50,7 @@ jobs:
 
       - name: Build and publish package
         env:
-          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          PYPI_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+          UV_PUBLISH_TOKEN: ${{ secrets.UV_PUBLISH_TOKEN}}
         run: |
-          uv pip build
-          uv pip publish
+          uv build
+          uv publish
