@@ -1,0 +1,44 @@
+site_name: PyLogger-Slack
+site_description: Python logging with an option to format it for YAML/JSON format with a support for Slack Notification.
+site_author: Binay Kumar Pradhan
+repo_url: https://github.com/VinayIN/pylogger-slack
+repo_name: VinayIN/pylogger-slack
+
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: indigo
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - tables
+
+nav:
+  - Home: index.md
+  - Usage:
+    - Configuration: usage/configuration.md
+    - Logging and Slack: usage/detailed.md
+
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/VinayIN
+    - icon: fontawesome/solid/globe
+      link: https://binaypradhan.com

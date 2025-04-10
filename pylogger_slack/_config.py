@@ -1,3 +1,8 @@
+"""Configuration management for the pylogger-slack package.
+
+This module handles loading and providing access to configuration settings from
+various sources including default values, TOML files, and environment variables.
+"""
 import os
 import tomllib
 import warnings
@@ -35,11 +40,23 @@ _DEFAULT_CONFIG = {
 }
 
 class Configuration:
+    """Configuration manager for pylogger-slack.
+    
+    Handles loading configuration from TOML files and providing access to settings.
+    """
     def __init__(self):
+        """Initialize the configuration manager."""
         self._config = None
 
     @property
     def config(self) -> Dict:
+        """Get the configuration dictionary.
+        
+        Lazily loads configuration from files on first access.
+        
+        Returns:
+            Dict: The complete configuration dictionary
+        """
         if self._config is None:
             config = _DEFAULT_CONFIG.copy()
             updated_config = self._read_config()
@@ -50,10 +67,19 @@ class Configuration:
 
     @config.setter
     def config(self, value: Dict):
+        """Prevent direct assignment to config property."""
         raise AttributeError("CONFIG is read-only")
     
     def _deep_merge(self, default: Dict, override: Dict) -> Dict:
-        """Recursively merge two dictionaries, preserving nested structure."""
+        """Recursively merge two dictionaries, preserving nested structure.
+        
+        Args:
+            default: The base dictionary
+            override: The dictionary with values to override
+            
+        Returns:
+            Dict: The merged dictionary
+        """
         result = default.copy()
         for key, value in override.items():
             if key in result and isinstance(result[key], dict) and isinstance(value, dict):
@@ -63,6 +89,14 @@ class Configuration:
         return result
 
     def _read_config(self) -> Dict:
+        """Read configuration from TOML files.
+        
+        Looks for dedicated pylogger_slack.toml file or pyproject.toml with
+        [tool.pylogger_slack] section.
+        
+        Returns:
+            Dict: The loaded configuration or empty dict if no files found
+        """
         config = {}
         config_path = "pylogger_slack.toml"
         pyproject_path = "pyproject.toml"
@@ -76,6 +110,14 @@ class Configuration:
         return config
 
     def _load_toml(self, path: str) -> Dict:
+        """Load and parse a TOML file.
+        
+        Args:
+            path: Path to the TOML file
+            
+        Returns:
+            Dict: Parsed TOML content or empty dict on error
+        """
         try:
             with open(path, "rb") as f:
                 return tomllib.load(f)
@@ -84,6 +126,14 @@ class Configuration:
             return {}
 
     def _expand_vars(self, config_var):
+        """Recursively expand environment variables in configuration values.
+        
+        Args:
+            config_var: The configuration value to process
+            
+        Returns:
+            The processed configuration with environment variables expanded
+        """
         def expand(value):
             if isinstance(value, str):
                 value = os.path.expandvars(value)
