@@ -6,8 +6,9 @@ build:
   tools:
     python: "3.11"
   jobs:
+    install:
+      - pip install .[dev]
     post_build:
-      # Deploy the docs with mike
       - pip install mike
       - git config --global user.name "ReadTheDocs"
       - git config --global user.email "docs@readthedocs.org"
@@ -15,10 +16,3 @@ build:
 
 mkdocs:
    configuration: mkdocs.yml
-
-python:
-  install:
-    - method: pip
-      path: .
-      extra_requirements:
-        - dev
