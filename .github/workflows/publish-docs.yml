@@ -26,9 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install --upgrade pip
-          uv pip install ".[dev]"
-          uv pip install mkdocs-material mike
+          uv sync
 
       - name: Set up Git user
         run: |
@@ -44,8 +42,8 @@ jobs:
 
       - name: Build and deploy docs with Mike
         run: |
-          mike deploy --push --update-aliases ${{ env.VERSION }} latest
-          mike set-default --push latest
+          uv run mike deploy --push --update-aliases ${{ env.VERSION }} latest
+          uv run mike set-default --push latest
           
       - name: Trigger ReadTheDocs build
         uses: dfm/rtds-action@v1
