@@ -49,6 +49,5 @@ jobs:
         run: |
           curl -X POST \
             -H "Content-Type: application/json" \
-            -H "Authorization: Token ${{ secrets.RTDS_WEBHOOK_TOKEN }}" \
-            -d '{"token": "${{ secrets.RTDS_WEBHOOK_TOKEN }}", "ref": "${{ github.ref }}", "default_branch": "main"}' \
+            -d '{"token": "${{ secrets.RTDS_WEBHOOK_TOKEN }}"}' \
             ${{ secrets.RTDS_WEBHOOK_URL }}
