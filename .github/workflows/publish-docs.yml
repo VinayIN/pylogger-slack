@@ -46,8 +46,9 @@ jobs:
           uv run mike set-default --push latest
           
       - name: Trigger ReadTheDocs build
-        uses: dfm/rtds-action@v1
-        with:
-          webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
-          webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
-          commit_ref: ${{ github.ref }}
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Token ${{ secrets.RTDS_WEBHOOK_TOKEN }}" \
+            -d '{"token": "${{ secrets.RTDS_WEBHOOK_TOKEN }}", "ref": "${{ github.ref }}", "default_branch": "main"}' \
+            ${{ secrets.RTDS_WEBHOOK_URL }}
