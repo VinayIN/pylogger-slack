@@ -5,14 +5,15 @@ build:
   os: ubuntu-lts-latest
   tools:
     python: "3.11"
+  commands:
+      - curl -LsSf https://astral.sh/uv/install.sh | sh
+      - export PATH="$HOME/.cargo/bin:$PATH"
+      - uv pip install --python $READTHEDOCS_VIRTUALENV_PATH/bin/python ".[dev]"
   jobs:
-    install:
-      - pip install -U pip
-      - pip install -e .[dev]
     post_build:
       - git config --global user.name "ReadTheDocs"
       - git config --global user.email "docs@readthedocs.org"
-      - mike deploy --push --update-aliases ${READTHEDOCS_VERSION} latest
+      - uv run mike deploy --push --update-aliases ${READTHEDOCS_VERSION} latest
 
 mkdocs:
    configuration: mkdocs.yml
