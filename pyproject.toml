@@ -1,6 +1,6 @@
 [project]
 name = "pylogger-slack"
-version = "0.0.3"
+version = "0.1.0"
 description = "Python logging with an option to format it for YAML/JSON format with a support for Slack Notification. (Helpful for monitoring codebase in production/testing)"
 authors = [{name="Binay Kumar Pradhan", email ="bpradhan.asli@gmail.com"}]
 readme = "README.md"
