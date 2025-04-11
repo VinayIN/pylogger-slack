@@ -4,11 +4,6 @@ build:
   os: ubuntu-lts-latest
   tools:
     python: "3.11"
-  jobs:
-    post_build:
-      - git config --global user.name "ReadTheDocs"
-      - git config --global user.email "docs@readthedocs.org"
-      - mike deploy --push --update-aliases ${READTHEDOCS_VERSION} 
 
 mkdocs:
   configuration: mkdocs.yml

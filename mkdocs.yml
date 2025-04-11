@@ -3,7 +3,6 @@ site_description: Python logging with an option to format it for YAML/JSON forma
 site_author: Binay Kumar Pradhan
 repo_url: https://github.com/VinayIN/pylogger-slack
 repo_name: VinayIN/pylogger-slack
-site_url: 'https://pylogger-slack.readthedocs.io/'
 
 theme:
   name: material
@@ -36,8 +35,6 @@ nav:
     - Logging and Slack: usage/detailed.md
 
 extra:
-  version:
-    provider: mike
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/VinayIN
