@@ -8,9 +8,7 @@ build:
 
   jobs:
     install:
-      - curl -LsSf https://astral.sh/uv/install.sh
-      - source $HOME/.local/bin/env
-      - uv pip install --python $READTHEDOCS_VIRTUALENV_PATH/bin/python ".[dev]"
+      - pip install ".[dev]"
   
     post_build:
       - git config --global user.name "ReadTheDocs"
