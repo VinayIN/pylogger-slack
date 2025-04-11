@@ -8,12 +8,12 @@ build:
 
   jobs:
     install:
-      - pip install ".[dev]"
+      - pip install mike mkdocs mkdocs-material
   
     post_build:
       - git config --global user.name "ReadTheDocs"
       - git config --global user.email "docs@readthedocs.org"
-      - uv run mike deploy --push --update-aliases ${READTHEDOCS_VERSION} latest
+      - mike deploy --push --update-aliases ${READTHEDOCS_VERSION} latest
 
 mkdocs:
    configuration: mkdocs.yml
