@@ -7,9 +7,9 @@ build:
     python: "3.11"
   jobs:
     install:
-      - pip install --dependency-groups=dev --no-cache-dir
+      - pip install -U pip
+      - pip install -e .[dev]
     post_build:
-      - pip install mike
       - git config --global user.name "ReadTheDocs"
       - git config --global user.email "docs@readthedocs.org"
       - mike deploy --push --update-aliases ${READTHEDOCS_VERSION} latest
