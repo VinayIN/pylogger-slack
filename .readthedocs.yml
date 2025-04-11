@@ -5,11 +5,13 @@ build:
   os: ubuntu-lts-latest
   tools:
     python: "3.11"
-  commands:
+
+  jobs:
+    install:
       - curl -LsSf https://astral.sh/uv/install.sh | sh
       - export PATH="$HOME/.cargo/bin:$PATH"
       - uv pip install --python $READTHEDOCS_VIRTUALENV_PATH/bin/python ".[dev]"
-  jobs:
+  
     post_build:
       - git config --global user.name "ReadTheDocs"
       - git config --global user.email "docs@readthedocs.org"
